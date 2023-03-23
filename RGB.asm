@@ -6,7 +6,7 @@
 
 		LD R2, CENTER	;sets R2 as the location of the dot, initially center
 		LD R3, RED	;sets R3 as the color of the dot, initially red
-		STI R3, R2	;draws the inital red dot
+		STR R3, R2, 0	;draws the inital red dot
 		
 		;;program start
 READ    	LDI R0, KBSR_ADDR	; R0 holds value at xFE00
@@ -174,6 +174,7 @@ L1	STR R6, R5, #0
 	ADD R5, R5, #1
 	ADD R4, R5, R7
 	BRnp L1
+	AND R5, R5, 0
 	RET
 START	.FILL 	xC000
 END	.FILL	xFDFF
