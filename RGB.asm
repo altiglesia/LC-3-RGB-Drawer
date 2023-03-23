@@ -4,9 +4,9 @@
 		;;  this calls a subroutine (function) that clears the screen
 		JSR CLEAR
 
-		LD R2, CENTER	;sets R2 as the location of the dot, initially center
-		LD R3, RED	;sets R3 as the color of the dot, initially red
-		STR R3, R2, 0	;draws the inital red dot
+		LD R2, CENTER		;sets R2 as the location of the dot, initially center
+		LD R3, RED		;sets R3 as the color of the dot, initially red
+		STR R3, R2, 0		;draws the inital red dot
 		
 		;;program start
 READ    	LDI R0, KBSR_ADDR	; R0 holds value at xFE00
@@ -15,23 +15,23 @@ READ    	LDI R0, KBSR_ADDR	; R0 holds value at xFE00
         	LDI R0, KBDR_ADDR	; read the key into R0
 	;;COLOR checking
 		;first we check if they pressed b
-		LD R1, B			;load b into R1
+		LD R1, B		;load b into R1
 		NOT R1, R1
 		ADD R1, R1, #1
 		ADD R1, R1, R0		;flip b to -b and add to R0
-		BRz BDOT			;if 0->b was pressed
+		BRz BDOT		;if 0->b was pressed
 		;else we check for g
 		LD R1, G
 		NOT R1, R1
 		ADD R1, R1, #1
 		ADD R1, R1, R0		;flip g to -g and add to R0
-		BRz GDOT			;if 0->g was pressed
+		BRz GDOT		;if 0->g was pressed
 		;else we check for r
 		LD R1, R
 		NOT R1, R1
 		ADD R1, R1, #1
 		ADD R1, R1, R0		;flip r to -r and add to R0
-		BRz RDOT			;if 0->r was pressed
+		BRz RDOT		;if 0->r was pressed
 	;;TOGGLE for line check
 		LD R1, T
 		NOT R1, R1
