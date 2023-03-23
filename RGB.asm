@@ -16,12 +16,12 @@ READ    LDI	R0, KBSR_ADDR	; R0 holds value at xFE00
 		; if we got here, we can read the key
         LDI R0, KBDR_ADDR	; read the key into R0
 	;;COLOR checking
-		;first we check if they pressed y
-		LD R1, Y			;load y into R1
+		;first we check if they pressed b
+		LD R1, B			;load b into R1
 		NOT R1, R1
 		ADD R1, R1, #1
-		ADD R1, R1, R0		;flip y to -y and add to R0
-		BRz YDOT			;if 0->y was pressed
+		ADD R1, R1, R0		;flip b to -b and add to R0
+		BRz BDOT			;if 0->b was pressed
 		;else we check for g
 		LD R1, G
 		NOT R1, R1
@@ -35,18 +35,18 @@ READ    LDI	R0, KBSR_ADDR	; R0 holds value at xFE00
 		ADD R1, R1, R0		;flip r to -r and add to R0
 		BRz RDOT			;if 0->r was pressed
 	;;MOVEMENT checking
-		;first we check to the right with s
+		;first we check to the right with d
+		LD R1, D			;load s into R1
+		NOT R1, R1
+		ADD R1, R1, #1
+		ADD R1, R1, R0		;flip d to -d and add to R0
+		BRz DMOVE			;if 0->d was pressed
+		;next we check down with s
 		LD R1, S			;load s into R1
 		NOT R1, R1
 		ADD R1, R1, #1
 		ADD R1, R1, R0		;flip s to -s and add to R0
 		BRz SMOVE			;if 0->s was pressed
-		;next we check down with z
-		LD R1, Z			;load z into R1
-		NOT R1, R1
-		ADD R1, R1, #1
-		ADD R1, R1, R0		;flip z to -z and add to R0
-		BRz ZMOVE			;if 0->z was pressed
 		;next left with a
 		LD R1, A			;load a into R1
 		NOT R1, R1
@@ -61,8 +61,8 @@ READ    LDI	R0, KBSR_ADDR	; R0 holds value at xFE00
 		BRz WMOVE			;if 0->w was pressed
 
 		BR	READ			;else we wait
-YDOT	LD R3, YELLOW		;sets color to yellow
-		STR R3, R2, 0		;draws the yellow dot
+BDOT	LD R3, BLUE			;sets color to blue
+		STR R3, R2, 0		;draws the blue dot
 		BR 	READ
 GDOT	LD R3, GREEN		;sets color to green
 		STR R3, R2, 0		;draws green dot
@@ -70,7 +70,7 @@ GDOT	LD R3, GREEN		;sets color to green
 RDOT	LD R3, RED			;sets color to red
 		STR R3, R2, 0		;draws red dot in the center
 		BR READ
-SMOVE	LD R7, SIDEWALL
+DMOVE	LD R7, SIDEWALL
 		ADD R6, R2, #1		;R6 is R2+1->can check if multiple of 128
 		AND R7, R7, R6
 		BRz READ
@@ -79,7 +79,7 @@ SMOVE	LD R7, SIDEWALL
 		ADD R2, R2, #1		;moves location to the right by 1	
 		STR R3, R2,	0		;draws new dot there
 		BR READ
-ZMOVE	LD R7, BOTTOM		;R7 is now bottom
+SMOVE	LD R7, BOTTOM		;R7 is now bottom
 		ADD R7, R7, R2		;R7 is bottom left pixel-current location
 		BRzp	READ
 		AND R7, R7, 0		;sets R7 to 0->code for black
@@ -113,13 +113,13 @@ WMOVE	LD R7, TOP			;R7 is now top
 
 CENTER	.FILL	xE040
 RED		.FILL	x7C00
-YELLOW 	.FILL	x7FF0
+BLUE 	.FILL	x001F
 GREEN	.FILL	x03E0
-Y 		.FILL   x0079
+B 		.FILL   x0062
 G 		.FILL	x0067
 R 		.FILL	x0072
 S 		.FILL 	x0073
-Z 		.FILL	x007A
+D 		.FILL	x0064
 A 		.FILL 	x0061
 W 		.FILL	x0077
 DOWN	.FILL	x0080
