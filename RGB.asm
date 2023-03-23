@@ -41,6 +41,12 @@ READ    LDI	R0, KBSR_ADDR	; R0 holds value at xFE00
 		ADD R1, R1, #1
 		ADD R1, R1, R0		;flip t to -t and add to R0
 		BRz TOGGLE			;if 0->t was pressed
+	;;CLEAR check
+		LD R1, C
+		NOT R1, R1
+		ADD R1, R1, #1
+		ADD R1, R1, R0		;flip c to -c and add to R0
+		BRz CLEAR			;if 0->c was pressed
 	;;MOVEMENT checking
 		;first we check to the right with d
 		LD R1, D			;load s into R1
@@ -80,7 +86,7 @@ RDOT	LD R3, RED			;sets color to red
 		STR R3, R2, 0		;draws red dot in the center
 		BR READ
 	
-	;;toggle jump
+	;;toggle line drawing
 TOGGLE 	NOT R5, R5			;initially 0->0 means no line, negative means line
 		BR READ
 	;;movement jumps
@@ -149,6 +155,7 @@ D 		.FILL	x0064
 A 		.FILL 	x0061
 W 		.FILL	x0077
 T  		.FILL	x0074
+C       .FILL	x0063
 DOWN	.FILL	x0080
 UP 		.FILL 	xFF80
 LEFT	.FILL 	xFFFF
