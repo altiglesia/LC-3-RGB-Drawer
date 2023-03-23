@@ -3,9 +3,10 @@
 		;;  this calls a subroutine (function) that clears the screen
 		JSR	CLEAR
 
-		;;  this code draws a red dot in the center
+		;;  this code draws a red dot in the center in the beginning
 		LD 	R5, RED
 		STI	R5, CENTER
+		AND R5, R5, 0		;reset R5 to 0
 
 	;; WRITE THE REST OF YOUR PROGRAM HERE!
 		LD R2, CENTER	;sets R2 as the location of the dot, initially center
@@ -34,6 +35,12 @@ READ    LDI	R0, KBSR_ADDR	; R0 holds value at xFE00
 		ADD R1, R1, #1
 		ADD R1, R1, R0		;flip r to -r and add to R0
 		BRz RDOT			;if 0->r was pressed
+	;;TOGGLE for line check
+		LD R1, T
+		NOT R1, R1
+		ADD R1, R1, #1
+		ADD R1, R1, R0		;flip t to -t and add to R0
+		BRz TOGGLE			;if 0->t was pressed
 	;;MOVEMENT checking
 		;first we check to the right with d
 		LD R1, D			;load s into R1
@@ -61,6 +68,8 @@ READ    LDI	R0, KBSR_ADDR	; R0 holds value at xFE00
 		BRz WMOVE			;if 0->w was pressed
 
 		BR	READ			;else we wait
+	
+	;;color jumps
 BDOT	LD R3, BLUE			;sets color to blue
 		STR R3, R2, 0		;draws the blue dot
 		BR 	READ
@@ -70,39 +79,56 @@ GDOT	LD R3, GREEN		;sets color to green
 RDOT	LD R3, RED			;sets color to red
 		STR R3, R2, 0		;draws red dot in the center
 		BR READ
+	
+	;;toggle jump
+TOGGLE 	NOT R5, R5			;initially 0->0 means no line, negative means line
+		BR READ
+	;;movement jumps
 DMOVE	LD R7, SIDEWALL
 		ADD R6, R2, #1		;R6 is R2+1->can check if multiple of 128
 		AND R7, R7, R6
 		BRz READ
+		LD R7, LEFT			;sets R7 to xFFFF
+		AND R7, R7, R5		;and toggle and xFFFF
+		BRn DDRAW			;negative->toggle is on, skip deleting lines
 		AND R7, R7, 0		;sets R7 to 0->code for black
 		STR	R7, R2, 0		;draws black dot, clearing current one
-		ADD R2, R2, #1		;moves location to the right by 1	
+DDRAW	ADD R2, R2, #1		;moves location to the right by 1	
 		STR R3, R2,	0		;draws new dot there
 		BR READ
 SMOVE	LD R7, BOTTOM		;R7 is now bottom
 		ADD R7, R7, R2		;R7 is bottom left pixel-current location
 		BRzp	READ
+		LD R7, LEFT			;sets R7 to xFFFF
+		AND R7, R7, R5		;and toggle and xFFFF
+		BRn SDRAW			;negative->toggle is on, skip deleting lines
 		AND R7, R7, 0		;sets R7 to 0->code for black
 		STR	R7, R2, 0		;draws black dot, clearing current one
-		LD R7, DOWN
+SDRAW	LD R7, DOWN
 		ADD R2, R2, R7		;moves location to 1 down->x80	
 		STR R3, R2,	0		;draws new dot there
 		BR READ
 AMOVE	LD R7, SIDEWALL
 		AND R7, R7, R2
 		BRz READ
+		LD R7, LEFT			;sets R7 to xFFFF
+		AND R7, R7, R5		;and toggle and xFFFF
+		BRn ADRAW			;negative->toggle is on, skip deleting lines
 		AND R7, R7, 0		;sets R7 to 0->code for black
 		STR	R7, R2, 0		;draws black dot, clearing current one
-		LD R7, LEFT
+ADRAW	LD R7, LEFT
 		ADD R2, R2, R7		;moves location to 1 left->xFFFF	
 		STR R3, R2,	0		;draws new dot there
 		BR READ
 WMOVE	LD R7, TOP			;R7 is now top
 		ADD R7, R7, R2		;R7 is topright pixel-current location
 		BRnz	READ
+		LD R7, LEFT			;sets R7 to xFFFF
+		AND R7, R7, R5		;and toggle and xFFFF
+		BRn WDRAW			;negative->toggle is on, skip deleting lines
 		AND R7, R7, 0		;sets R7 to 0->code for black
 		STR	R7, R2, 0		;draws black dot, clearing current one
-		LD R7, UP
+WDRAW	LD R7, UP
 		ADD R2, R2, R7		;moves location to 1 up->xFF80	
 		STR R3, R2,	0		;draws new dot there
 		BR READ
@@ -122,6 +148,7 @@ S 		.FILL 	x0073
 D 		.FILL	x0064
 A 		.FILL 	x0061
 W 		.FILL	x0077
+T  		.FILL	x0074
 DOWN	.FILL	x0080
 UP 		.FILL 	xFF80
 LEFT	.FILL 	xFFFF
