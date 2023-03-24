@@ -21,6 +21,7 @@ SETUP:
 
 
 INSTRUCTIONS:
+  For the program to respond to your inputs, you need to click on the white box below the black display square. Once selected, it should change from white to yellow.
   You can move your drawing pointer around using the 'wasd' keys respectively.
   To change the color of your drawing pointer, press 'r' for red, 'g' for green, or 'b' for blue.
   To toggle drawing/moving mode, press 't'. (Moving over a drawn pixel in moving mode will erase that pixel's color)
