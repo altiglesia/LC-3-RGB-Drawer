@@ -11,7 +11,7 @@ To run it, please follow this step by step setup guide. If you're already set up
 This program requires Java to run.
 
 SETUP:
-  1. Download the LC3Sim.jar file and the RGB.asm file.
+  1. Fork and cline the LC3Sim.jar and the RGB.asm files.
   2. Put them in the same folder.
   3. In your terminal, navigate to this folder, and run "java -jar LC3Sim.jar" which should run the LC-3.
   4. In the LC-3, you should be able to type into a text box right below the "Next" button. Type "as RGB.asm" into this box and press enter. The box below it should say "Assembly of 'RGB.asm' was completed without errors or warnings." This will create the RGB.obj and RGB.sym files that are also here. You can theoretically just download the files here and skip this step, but I would recommend generating them yourself.
